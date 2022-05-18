@@ -10,6 +10,8 @@ struct Digrafo
     void mostrar();
 
     //Partes
+
+    //Nodos de la lista de adyacencia
     struct Cabeza
     {
         int t;
@@ -19,8 +21,11 @@ struct Digrafo
             w = peso;
         }
     };
+    //Cantidad de aristas
     int _aristas;
+    //Cantidad de nodos
     int _nodos;
+    //Lista de adyacencias
     vector<vector<Cabeza>> _adylst;
 };
 
