@@ -16,8 +16,7 @@ Digrafo::Digrafo()
         cin >> siguiente;
         cin >> peso;
         _adylst[actual].push_back(Cabeza(siguiente,peso));
-    }
-    
+    }    
 }
 
 Digrafo::~Digrafo()

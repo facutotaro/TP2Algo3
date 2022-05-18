@@ -7,7 +7,7 @@ const int INF = std::numeric_limits<int>::max();
 typedef int dist;
 typedef pair<int,Nodo> Pendiente;
 
-vector<Nodo>dijkstra(Digrafo g, Nodo n)
+void dijkstra(Digrafo &g, Nodo n, vector<int> &pesos)
 {
     vector<dist> res = vector<dist>(g._nodos,INF);
     res[n] = 0;
@@ -43,7 +43,7 @@ vector<Nodo>dijkstra(Digrafo g, Nodo n)
         {
             cout << "INF ";
         }
-        else cout << res[i] << " ";
+        else cout << res[i] + pesos[i] - pesos[n]<< " ";
     }
-    return res;
+    cout << endl;
 }

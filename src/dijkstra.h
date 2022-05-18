@@ -6,5 +6,6 @@ using namespace std;
 #include "vector"
 using namespace std;
 typedef int Nodo;
-vector<Nodo>dijkstra(Digrafo g, Nodo n);
+
+void dijkstra(Digrafo &g, Nodo n, vector<int> &pesos);
 #endif

@@ -2,6 +2,7 @@
 #include "dijkstra.h"
 #include "bellmanFord.h"
 #include "digrafo.h"
+#include "johnson.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
     {
         cout << "Hola Facu" << endl;
         Digrafo g = Digrafo();
-        dijkstra(g,stoi(argv[2]));
+        johnson(g);
         break;
     }
     case 4:
@@ -28,6 +29,5 @@ int main(int argc, char *argv[])
    default:
         cout << "No master ese ej no lo tengo" << endl;
        break;
-   }
-    
+   }  
 }
