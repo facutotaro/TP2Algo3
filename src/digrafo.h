@@ -9,23 +9,25 @@ struct Digrafo
     ~Digrafo();
     void mostrar();
 
-    //Partes
+    // Partes
 
-    //Nodos de la lista de adyacencia
+    // Nodos de la lista de adyacencia
     struct Cabeza
     {
         int t;
         int w;
-        Cabeza(int nodo, int peso){
+        Cabeza(int nodo, int peso)
+        {
             t = nodo;
             w = peso;
         }
     };
-    //Cantidad de aristas
+
+    // Cantidad de aristas
     int _aristas;
-    //Cantidad de nodos
+    // Cantidad de nodos
     int _nodos;
-    //Lista de adyacencias
+    // Lista de adyacencias
     vector<vector<Cabeza>> _adylst;
 };
 

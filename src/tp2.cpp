@@ -1,7 +1,7 @@
 #include <iostream>
 #include "dijkstra.h"
 #include "bellmanFord.h"
-#include "grafo.h"
+#include "digrafo.h"
 
 using namespace std;
 
@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     case 3:
     {
         cout << "Hola Facu" << endl;
-        Grafo g = Grafo();
-        g.mostrar();
+        Digrafo g = Digrafo();
+        dijkstra(g,2);
         break;
     }
     case 4:
