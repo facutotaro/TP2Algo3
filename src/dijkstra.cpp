@@ -41,10 +41,9 @@ vector<Nodo>dijkstra(Digrafo g, Nodo n)
     {
         if (res[i] == INF)
         {
-            cout << "INF " << endl;
+            cout << "INF ";
         }
-        else cout << res[i] << " " << endl;
+        else cout << res[i] << " ";
     }
-    
     return res;
 }

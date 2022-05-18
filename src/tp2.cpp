@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     {
         cout << "Hola Facu" << endl;
         Digrafo g = Digrafo();
-        dijkstra(g,2);
+        dijkstra(g,stoi(argv[2]));
         break;
     }
     case 4:
