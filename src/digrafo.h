@@ -3,24 +3,32 @@
 #include "vector"
 using namespace std;
 
+struct Cabeza
+{
+    int t;
+    int w;
+    Cabeza(int nodo, int peso)
+    {
+        t = nodo;
+        w = peso;
+    }
+};
+
 struct Digrafo
 {
     Digrafo();
     ~Digrafo();
     void mostrar();
 
-    //Partes
-    struct Cabeza
-    {
-        int t;
-        int w;
-        Cabeza(int nodo, int peso){
-            t = nodo;
-            w = peso;
-        }
-    };
+    // Partes
+
+    // Nodos de la lista de adyacencia
+
+    // Cantidad de aristas
     int _aristas;
+    // Cantidad de nodos
     int _nodos;
+    // Lista de adyacencias
     vector<vector<Cabeza>> _adylst;
 };
 

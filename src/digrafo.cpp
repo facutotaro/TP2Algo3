@@ -9,14 +9,14 @@ Digrafo::Digrafo()
     cin >> _aristas;
     _adylst = vector<vector<Cabeza>>(_nodos,vector<Cabeza>());
     int actual,siguiente,peso;
+    //Itero sobre el input para crear el digrafo
     for (int i = 0; i < _aristas; i++)
     {
         cin >> actual;
         cin >> siguiente;
         cin >> peso;
         _adylst[actual].push_back(Cabeza(siguiente,peso));
-    }
-    
+    }    
 }
 
 Digrafo::~Digrafo()
