@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "vector"
+#include "map"
 
 using namespace std;
 typedef int peso;
@@ -8,13 +9,16 @@ typedef int peso;
 
 struct Intervalo 
 {
-        int a;
-        int b;
-        Intervalo(int limiteInferior, int limiteSuperior){
-            a = limiteInferior;
-            b = limiteSuperior;
-        }
+    Intervalo();
+    int a;
+    int b;
+    Intervalo(int limiteInferior, int limiteSuperior){
+        a = limiteInferior;
+        b = limiteSuperior;
+    }
 };
+
+
 
 struct Cabeza
 {
@@ -37,10 +41,9 @@ class GrafoIntervalo
     int _n;
     Intervalo _inicio; 
     Intervalo _fin;
-    vector<Intervalo> _intervalos;
-    vector<Intervalo> _N;
+    vector<pair<Intervalo, int>> _intervalos;
+    vector<pair<Intervalo, int>> _N;
 
-    int _m;
     vector<vector<Cabeza>> _adylstIn;
     vector<vector<Cabeza>> _adylstOut;
     vector<Cabeza> _adylstInicio; 
