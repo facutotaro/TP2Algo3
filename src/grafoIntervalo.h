@@ -5,6 +5,8 @@
 
 using namespace std;
 typedef int peso;
+typedef int indice;
+typedef bool esNodo;
 
 
 struct Intervalo 
@@ -41,11 +43,10 @@ class GrafoIntervalo
     int _n;
     Intervalo _inicio; 
     Intervalo _fin;
-    vector<pair<Intervalo, int>> _intervalos;
-    vector<pair<Intervalo, int>> _N;
+    vector<pair<Intervalo, pair<indice, esNodo>>> _intervalos;
 
     vector<vector<Cabeza>> _adylstIn;
     vector<vector<Cabeza>> _adylstOut;
     vector<Cabeza> _adylstInicio; 
     
-};
+}; 
