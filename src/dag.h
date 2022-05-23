@@ -2,7 +2,7 @@
 #define DAG
 
 #include "grafoIntervalo.h"
-typdef int Nodo;
+typedef int Nodo;
 
 void dag(GrafoIntervalo &I, Nodo n, vector<peso> &pesos);
 
