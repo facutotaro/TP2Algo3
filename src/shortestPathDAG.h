@@ -1,11 +1,16 @@
-#ifndef shortestPathDAG
-#define shortestPathDAG
 
 #include "grafoIntervalo.h"
 
-void DFS(GrafoIntervalo &I, Nodo s); 
+#include<list>
+
+list<NodoInt> orden; 
+vector<vector<bool>> visitado; 
+
+void inicializarVisitados(GrafoIntervalo &I);
+void relax(NodoInt u, NodoInt v, int w); 
+void DFS(GrafoIntervalo &I, NodoInt s); 
 void topologicalSort(GrafoIntervalo &I); 
-void shortestPathDAG(GrafoIntervalo &I, Nodo s);
+void shortestPathDAG(GrafoIntervalo &I, NodoInt s);
 
 
-#endif 
+

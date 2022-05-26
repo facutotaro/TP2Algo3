@@ -3,14 +3,17 @@
 
 #include <iostream>
 #include <algorithm>
+#include <limits>
 #include "vector"
+#include<list>
+
 
 using namespace std;
 
 struct Intervalo 
 {
-    Intervalo(){a = 0; b = 0; idx = -1;};
-    ~Intervalo();
+    Intervalo(){a = 0; b = 0; idx = -1;}
+    ~Intervalo(){};
     
     int a;
     int b; 
@@ -32,39 +35,42 @@ struct Intervalo
     }
 };
 
-struct Nodo 
+
+struct NodoInt
 {
-    Nodo(){I = Intervalo(); type = string();};
-    ~Nodo();
+    NodoInt(){I = Intervalo(); tipo = -1; distancia = std::numeric_limits<int>::max();}
+    ~NodoInt(){};
 
     Intervalo I; 
-    string type; 
+    int tipo; 
+    // NodoInt padre; 
+    int distancia; 
 
-    Nodo(Intervalo I, string type)
+    NodoInt(Intervalo I, int tipo)
     {
         I = I; 
-        type = type; 
+        tipo = tipo; 
     }
 
-    bool operator == (Nodo n)
+    bool operator == (NodoInt n)
     {
         bool igual_I = this->I == n.I;
-        bool igual_type = this->type == n.type; 
+        bool igual_type = this->tipo == n.tipo; 
         
         return igual_I && igual_type;
     }
 };
 
-struct Cabeza
+struct CabezaInt
 {
-    Cabeza(){n = Nodo(); w = 0;}
-    ~Cabeza();
+    CabezaInt(){n = NodoInt(); w = 0;}
+    ~CabezaInt(){};
     
-    Nodo n;
+    NodoInt n; 
     int w;
-    Cabeza(Nodo nodo, int peso)
+    CabezaInt(NodoInt nodo, int peso)
     {
-        n = nodo;
+        n = n;
         w = peso;
     }
 };
@@ -73,14 +79,19 @@ struct GrafoIntervalo
 {
     GrafoIntervalo();
     ~GrafoIntervalo();
-    
+
+    void solver();
+
     int _n;
     vector<Intervalo> _intervalos;
-    vector<Nodo> _N;
-    vector<Intervalo> _intervaloAsociado;
-
-    vector<vector<Cabeza>> _adylstIn; 
-    vector<vector<Cabeza>> _adylstOut;
+    vector<NodoInt> _N; 
+    // Vector con 0 <= i <= _n + 1 posiciones (I_0 a I_n ya que I_n+1 no tiene aristas de salida)
+    // En la lista de adyacencia del intervalo i, _adylst[i], contendra dos vectores tq' 
+    // _adylst[i][0] es la lista de adyancencia del nodo i_in y _adylst[i][1] la lista de adyacencia del nodo i_out. 
+    // En caso de que _adylst[i] sea vacio quiere decir que ese intervalo no es nodo del grafo. 
+    vector<vector<vector<CabezaInt>>> _adylst;
 }; 
 
 #endif
+
+
