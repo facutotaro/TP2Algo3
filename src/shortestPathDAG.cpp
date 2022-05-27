@@ -1,10 +1,10 @@
-
 #include "shortestPathDAG.h"
 
 void relax(NodoInt u, NodoInt v, int w)
 {
     if (v.distancia > u.distancia + w) 
          v.distancia = u.distancia + w;
+         // v.padre = u; 
 }
 
 void inicializarVisitados(GrafoIntervalo &I)

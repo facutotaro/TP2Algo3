@@ -42,8 +42,8 @@ struct NodoInt
     ~NodoInt(){};
 
     Intervalo I; 
-    int tipo; 
-    // NodoInt padre; 
+    int tipo;
+    // NodoInt padre;  
     int distancia; 
 
     NodoInt(Intervalo I, int tipo)
