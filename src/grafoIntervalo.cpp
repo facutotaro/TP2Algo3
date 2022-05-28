@@ -29,7 +29,7 @@ struct Intervalo
         return igual_a && igual_b && igual_idx; 
     }
 };
-using Edge = pair<Intervalo, Peso>;
+using Cabeza = pair<Intervalo, Peso>;
 struct Arista
 {
     Arista(){u = Intervalo(); v = Intervalo(); w = 0;}
@@ -45,37 +45,46 @@ struct Arista
         w = peso; 
     }
 };
-using Grafo = vector<vector<Edge>>;
+using Grafo = vector<vector<Cabeza>>;
 
 int n; 
 int K; 
-vector<Intervalo> intervalos, intervaloAsociado, N; 
+vector<Intervalo> intervalos, intervaloAsociado, padre, N; 
 vector<Arista> B, C; 
 Grafo D; 
 
-vector<Intervalo> Dijkstra(Grafo G, Intervalo v0){
+void armarPath(Intervalo s, Intervalo d, vector<Intervalo> padre, vector<Intervalo> path){
+    if(d == s){
+        path.push_back(s);
+    } else if(padre[d.idx] == Intervalo()){
+        path.push_back(Intervalo()); 
+    } else {
+        Intervalo p = padre[d.idx];
+        path.push_back(p);
+        armarPath(s, p, padre, path);
+    }
+}
+
+void Dijkstra(Grafo G, Intervalo s){
     const int INFTY = std::numeric_limits<int>::max();
     vector<Peso> dist(G.size(), INFTY); 
     set<Intervalo> pendientes; 
-    vector<Intervalo> padre(G.size(), Intervalo());
-    vector<bool> sptSet(G.size(), false);
+    padre.resize(G.size());
 
     for(int i = 0; i < N.size(); i++){ pendientes.insert(N[i]);}
-    dist[v0.idx] = 0; 
+    dist[s.idx] = 0; 
     while (pendientes.size() > 0){
         Intervalo Ii = *pendientes.begin();
-        sptSet[Ii.idx] = true; 
         for(Intervalo Ij : pendientes){
             if(dist[Ij.idx] < dist[Ii.idx]){ Ii = Ij;}
         }
         pendientes.erase(Ii);
         for(auto const& [Ih, w] : G[Ii.idx]){
             dist[Ih.idx] = min(dist[Ih.idx], dist[Ii.idx] + w);
+            padre[Ih.idx] = Ii;
         }
     }
-    return dist; 
 }
-
 
 int main(){
     cin >> n;
@@ -137,29 +146,27 @@ int main(){
         Intervalo Iout = Intervalo(Iin.a, Iin.b, Iin.idx + K);
         N.push_back(Iout);
         Arista e = Arista(Iin, Iout, 0); 
-        D[Iin.idx].push_back(Edge(e.v, e.w));
+        D[Iin.idx].push_back(Cabeza(e.v, e.w));
     }
     N.push_back(fin); 
 
     D.resize(2*(K + 1));
-    for(Arista e : B){ D[e.u.idx + K].push_back(Edge(e.v, e.w));}
-    for(Arista e : C){ D[e.u.idx].push_back(Edge(N[e.v.idx == fin.idx ? fin.idx : e.v.idx + K], e.w));}
+    for(Arista e : B){ D[e.u.idx + K].push_back(Cabeza(e.v, e.w));}
+    for(Arista e : C){ D[e.u.idx].push_back(Cabeza(N[e.v.idx == fin.idx ? fin.idx : e.v.idx + K], e.w));}
     
-    vector<Intervalo> conjuntoDominanteTotal = Dijkstra(D, inicio);
+    Dijkstra(D, inicio);
+    vector<Intervalo> minPath;
+    armarPath(inicio, fin, padre, minPath);
 
+    vector<int> conjuntoDominanteTotal;
+    for(Intervalo I : minPath){
+        if(0 < I.idx < K + 1){ conjuntoDominanteTotal.push_back(I.idx - 1);}
+    }
 
-    
-
-
-
-    
-
-
-
-
-
-
-
+    cout << conjuntoDominanteTotal.size() << endl;
+    for(int e : conjuntoDominanteTotal){
+        cout << e << " "; 
+    }
 
     return 0; 
 }
