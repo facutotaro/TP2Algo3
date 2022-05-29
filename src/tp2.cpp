@@ -1,7 +1,8 @@
 #include <iostream>
 #include "dijkstra.h"
 #include "bellmanFord.h"
-#include "grafo.h"
+#include "digrafo.h"
+#include "Ej2Solver.h"
 
 using namespace std;
 
@@ -12,13 +13,16 @@ int main(int argc, char *argv[])
    case 1:
         cout << "Hola Juli" << endl;
        break;
-   case 2: 
-        cout << "Hola Tomi" << endl;
+   case 2:
+   { 
+        Ej2Solver s = Ej2Solver();
+        cout << s.cantCompConexas() << endl;
         break;
+    }
     case 3:
-    {
+   {
         cout << "Hola Facu" << endl;
-        Grafo g = Grafo();
+        Digrafo g = Digrafo();
         g.mostrar();
         break;
     }
