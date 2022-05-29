@@ -86,7 +86,7 @@ void Dijkstra(Grafo G, Intervalo s){
     }
 }
 
-int algoritmoDeBertossi(){
+int grafoIntervalo(){
     cin >> n;
     int a, b;
     for(int i = 0; i < n; i++){
