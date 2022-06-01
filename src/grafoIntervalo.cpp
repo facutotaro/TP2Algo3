@@ -1,277 +1,229 @@
-#include <iostream>
-#include <algorithm>
-#include <limits>
-#include <vector>
-#include <set>
+#include "grafoIntervalo.h"
 
-using namespace std;
+// Sea I un intervalo [a,b] con indice i.
 
-using Peso = int;  
-struct Intervalo 
-{
-    Intervalo(){a = 0; b = 0; idx = -1;}
-    ~Intervalo(){};
+// Cantidad de intervalos pasados como input.
+int n;
+// Cantidad de intervalos que no estan completamente contenidos dentro de otros y voy a considerar como
+// nodos de D.
+int K;
 
-    int a;
-    int b; 
-    int idx;
+// Vector que indica si el nodo i fue visitado en DFS.
+vector<bool> visitado;
+// P: Vector de posicion que relaciona al iesimo nodo con su posicion original pasada como input.
+// distancia: La distancia del nodo i al nodo source.
+vector<int> P, distancia;
+// Orden establecido por el Topological Sort para los nodos de D.
+list<Intervalo> orden;
+// Conjunto de intervalos pasados como input.
+vector<Intervalo> intervalos;
+// N: Nodos de D
+// padre: nodo previo
+// intervaloAsociado:
+vector<Intervalo> N, padre, intervaloAsociado;
+// B: representan el conjunto de aristas en el que dos intervalo en N se intersecan.
+// C: representa el conjunto de aristas en el que dos intervalos en N no se intesecan y no hay
+//    intervalo entre todos los pasados por parametro que este entre estos dos.
+//    ]    [    ]    [
+//    Ii.b Ih.a Ih.b Ij.a
+vector<Arista> B, C;
+// D: es un vector de vectores de vecinos tq' G[i] tiene los vecinos del intervalo con idx igual a i.
+Grafo D;
 
-    Intervalo(int limiteInferior, int limiteSuperior, int idx){
-        a = limiteInferior;
-        b = limiteSuperior;
-        idx = idx;  
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sea n la cantidad de nodos en D y m la cantidad de aristas en D.
+
+// Dado una arista (u, v) con un costo asociado w, Relax actualiza la distancia de v en caso que
+// sea mayor a la distancia actual de u sumado a w. Ademas u es ahora padre de v ya que es el nodo
+// inmediatamente detras de v. Complejidad: O(1).
+void relax(Intervalo u, Intervalo v, int w){
+    if (distancia[u.idx] != INFTY && distancia[v.idx] > distancia[u.idx] + w ){
+        distancia[v.idx] = distancia[u.idx] + w;
+        padre[v.idx] = u;
     }
-    bool operator==(Intervalo i){
-        bool igual_a = this->a == i.a; 
-        bool igual_b = this->b == i.b; 
-        bool igual_idx = this->idx == i.idx; 
+}
 
-        return igual_a && igual_b && igual_idx; 
+// Inicializa los vectores visitado, distancia y padre que van a ser usados para calcular el camino
+// minimo. Complejidad: O(n).
+void inicializarVisitados(Grafo& G){
+    visitado.resize(G.size(), false);
+    distancia.resize(G.size(), INFTY);
+    padre.resize(G.size(), Intervalo());
+}
+
+// Complejidad: O(m).
+void DFS(Grafo& G, Intervalo s){
+    visitado[s.idx] = true;
+    for(Vecino v : G[s.idx]){
+        if(!visitado[v.first.idx])
+            DFS(G, v.first);
     }
-};
-using Cabeza = pair<Intervalo, Peso>;
-struct Arista
-{
-    Arista(){u = Intervalo(); v = Intervalo(); w = 0;}
-    ~Arista(){};
+    orden.push_front(s);
+}
 
-    Intervalo u; 
-    Intervalo v; 
-    Peso w; 
-
-    Arista(Intervalo cola, Intervalo cabeza, Peso peso){
-        u = cola; 
-        v = cabeza;
-        w = peso; 
+// Complejidad: O(n + m).
+void topologicalSort(Grafo& G){
+    for(Intervalo I : N){
+        if(!visitado[I.idx])
+            DFS(D, I);
     }
-};
-using Grafo = vector<vector<Cabeza>>;
+}
 
-int n; 
-int K; 
-vector<Intervalo> intervalos, intervaloAsociado, padre, N; 
-vector<Arista> B, C; 
-Grafo D; 
+// Complejidad: O(n + m).
+void DAGShortestPath(Grafo& G, Intervalo s){
+    inicializarVisitados(G);
+    topologicalSort(G);
+    distancia[s.idx] = 0;
+    for (Intervalo I : orden){
+        for (Vecino v : G[I.idx]){ relax(I, v.first, v.second);}
+    }
+}
 
-void armarPath(Intervalo s, Intervalo d, vector<Intervalo> padre, vector<Intervalo> path){
-    if(d == s){
-        path.push_back(s);
-    } else if(padre[d.idx] == Intervalo()){
-        path.push_back(Intervalo()); 
+// complejidad: O(n).
+void armarCaminoMinimo(Intervalo& s, Intervalo& d, vector<Intervalo>& padres, vector<Intervalo>& camino){
+    if(padre[d.idx] == s){
+        camino.push_back(s);
+    } else if(padres[d.idx] == Intervalo()){
+        camino.push_back(Intervalo());
     } else {
-        Intervalo p = padre[d.idx];
-        path.push_back(p);
-        armarPath(s, p, padre, path);
+        Intervalo p = padres[d.idx];
+        camino.push_back(p);
+        armarCaminoMinimo(s, p, padres, camino);
     }
 }
 
-void Dijkstra(Grafo G, Intervalo s){
-    const int INFTY = std::numeric_limits<int>::max();
-    vector<Peso> dist(G.size(), INFTY); 
-    set<Intervalo> pendientes; 
-    padre.resize(G.size());
-
-    for(int i = 0; i < N.size(); i++){ pendientes.insert(N[i]);}
-    dist[s.idx] = 0; 
-    while (pendientes.size() > 0){
-        Intervalo Ii = *pendientes.begin();
-        for(Intervalo Ij : pendientes){
-            if(dist[Ij.idx] < dist[Ii.idx]){ Ii = Ij;}
-        }
-        pendientes.erase(Ii);
-        for(auto const& [Ih, w] : G[Ii.idx]){
-            dist[Ih.idx] = min(dist[Ih.idx], dist[Ii.idx] + w);
-            padre[Ih.idx] = Ii;
-        }
-    }
-}
-
-int grafoIntervalo(){
+void grafoIntervalo(){
     cin >> n;
     int a, b;
+    int minA = 2*n - 1;
+    int maxB = 0;
     for(int i = 0; i < n; i++){
         cin >> a;
-        cin >> b; 
-        intervalos.push_back(Intervalo(a, b, i + 1));
+        cin >> b;
+        minA = min(a, minA);
+        maxB = max(b, maxB);
+        intervalos.push_back(Intervalo(a, b, i));
     }
 
-    sort(intervalos.begin(), intervalos.end(), [](Intervalo v, Intervalo u) { 
-            return v.a < u.a;
-        });
+    for(Intervalo Ii : intervalos){
+        if (Ii.a == minA && Ii.b == maxB) {
+            Intervalo Ij = intervalos[Ii.idx + 1 % n];
+            cout << 2 << endl;
+            cout << Ii.idx << " " << Ij.idx << endl;
+            return;
+        }
+    }
+    // Ordeno los intervalos pasados por parametro segun su a. Complejidad: O(nlog(n)).
+    sort(intervalos.begin(), intervalos.end());
 
-    Intervalo inicio = Intervalo(-2, -1, 0); 
-    N.push_back(inicio);  
-
-    for(int i = 0; i < intervalos.size() - 1; i++){
-        Intervalo Ii = intervalos[i]; 
+    // Agrego al conjunto de nodos de mi grafo los intervalos que no estan completamente contendios en
+    // otros. Ademas agrego los intervalos "de mentira" inicio y fin. Complejidad: O(n²).
+    Intervalo inicio = Intervalo(-2, -1, 0);
+    N.push_back(inicio);
+    for(auto Ii : intervalos){
         bool estaIncluido = false;
-        for(int j = i + 1; j < intervalos.size(); j++){
-            Intervalo Ij = intervalos[j];
-            if (Ij.a < Ii.a < Ii.b < Ij.b){
-                estaIncluido = true; 
+        for(auto Ij : intervalos){
+            if (Ij.a < Ii.a && Ii.b < Ij.b){
+                estaIncluido = true;
                 break;
             }
         }
         if (!estaIncluido){
-            N.push_back(Ii); 
+            P.push_back(Ii.idx);
             K++;
+            Ii.idx = K;
+            N.push_back(Ii);
         }
     }
-
-    Intervalo fin = Intervalo(2*n + 1, 2*n + 2, 2*K + 1); 
+    Intervalo fin = Intervalo(2*n, 2*n + 1, 2*K + 1);
     N.push_back(fin);
 
+    // Sea I un intervalo en N - {fin} tq N[i] = I, su asociado va a ser el elemento en la posicion intervaloAsociado[i].
+    // El intervalo asociado se define como el primer intervalo en intervalos que termina luego del fin
+    // de un intervalo I en N - {fin}. Esto me va a servir para armar el conjunto de aristas C en tiempo O(n²).
+    // Complejidad: O(n²).
     for(int i = 0; i < N.size() - 1; i++){
         Intervalo Ii = N[i];
-        Intervalo iAsociado = fin;  
-        for (int j = i + 1; j < intervalos.size(); j++){
+        Intervalo iAsociado = fin;
+        for(int j = 0; j < intervalos.size(); j++){
             Intervalo Ij = intervalos[j];
-            if (Ii.b < Ij.a && Ij.b < iAsociado.b) iAsociado = Ij;
+            if (Ii.b < Ij.a && Ij.b < iAsociado.b)
+                iAsociado = Ij;
         }
-        intervaloAsociado.push_back(iAsociado); 
+        intervaloAsociado.push_back(iAsociado);
     }
 
+    // Armo ambos conjuntos de aristas B y C. Complejidad: O(n²).
     for(int i = 0; i < N.size() - 1; i++){
         Intervalo Ii = N[i];
         Intervalo iEsimoAsociado = intervaloAsociado[i];
         for(int j = i + 1; j < N.size(); j++){
             Intervalo Ij = N[j];
-            if (Ii.a < Ij.a < Ii.b < Ij.b) B.push_back(Arista(Ii, Ij, 1));
-            if (Ii.b < Ij.a && !(Ii.b < iEsimoAsociado.a < iEsimoAsociado.b < Ij.a)) C.push_back(Arista(Ii, Ij, Ii.idx == 0 ? 0 : 1));
+            if (Ii.a < Ij.a && Ii.b < Ij.b && Ij.a < Ii.b) B.push_back(Arista(Ii, Ij, 1));
+            if (Ii.b < Ij.a && !(Ii.b < iEsimoAsociado.a && iEsimoAsociado.b < Ij.a)) C.push_back(Arista(Ii, Ij, Ii.idx == 0 ? 0 : 1));
         }
     }
 
-    for(int i = 0; i < K; i++){
+    // Aumento el tamaño del conjunto de nodos como del grafo para poder incluir a los nodos
+    // I_in e I_out. Complejidad: O(K) = O(n) ya que a lo sumo en N tendria a todos
+    // los intervalos que me pasan por parametro. Luego aumentaria al doble de intervalos
+    // en mi grafo y eso es O(2n) = O(n).
+    N.resize(2*(K + 1));
+    D.resize(2*(K + 1));
+
+    // Agrego propiamente a los Iout en N en la posicion I_in.idx + K. Ademas incluyo en G
+    // a la arista (I_in, I_out, 0). Complejidad: O(K) = O(n).
+    for(int i = 1; i <= K; i++){
         Intervalo Iin = N[i];
         Intervalo Iout = Intervalo(Iin.a, Iin.b, Iin.idx + K);
-        N.push_back(Iout);
-        Arista e = Arista(Iin, Iout, 0); 
-        D[Iin.idx].push_back(Cabeza(e.v, e.w));
+        N[i + K] = Iout;
+        Arista e = Arista(Iin, Iout, 0);
+        D[Iin.idx].push_back(Vecino(e.v, e.w));
     }
-    N.push_back(fin); 
+    N[2*K + 1] = fin;
 
-    D.resize(2*(K + 1));
-    for(Arista e : B){ D[e.u.idx + K].push_back(Cabeza(e.v, e.w));}
-    for(Arista e : C){ D[e.u.idx].push_back(Cabeza(N[e.v.idx == fin.idx ? fin.idx : e.v.idx + K], e.w));}
-    
-    Dijkstra(D, inicio);
-    vector<Intervalo> minPath;
-    armarPath(inicio, fin, padre, minPath);
+    // Aumento el tamaño de P para incluir en P[K] el mismo indice que hay en P[i-K] (su equivalente I_in).
+    // Complejidad: O(K) = O(n).
+    P.resize(2*K);
+    for(int i = K; i < P.size(); i++){P[i] = P[i - K];}
 
-    vector<int> conjuntoDominanteTotal;
-    for(Intervalo I : minPath){
-        if(0 < I.idx < K + 1){ conjuntoDominanteTotal.push_back(I.idx - 1);}
-    }
+    // Agrego al Grafo las aristas en B y en C teniendo en cuenta a las I_out.
+    // Complejidad: O(|B| + |C|) = O(m) = O(n²).
+    for(Arista e: B){D[e.u.idx + K].push_back(Vecino(e.v, e.w));}
+    for(Arista e : C){D[e.u.idx].push_back(Vecino((e.v.idx == fin.idx) ? fin : N[e.v.idx + K], e.w));}
 
-    cout << conjuntoDominanteTotal.size() << endl;
-    for(int e : conjuntoDominanteTotal){
-        cout << e << " "; 
-    }
+    // Complejidad: O(m + n) = O(n²).
+    DAGShortestPath(D, inicio);
+    vector<Intervalo> caminoMin{fin};
+    // Complejidad: O(n)
+    armarCaminoMinimo(inicio, fin, padre, caminoMin);
+    // Invierto el orden del camino ya que me lo da al reves. Complejidad: O(n).
+    reverse(caminoMin.begin(), caminoMin.end());
 
-    return 0; 
+    // Guardo en CDT los indices de los nodos por los que pasa el
+    // caminoMin sin contar al inicio y fin. Los indices guardados van a representar al
+    // iesimo intervalo pasado originalmente por parametro. Complejidad: O(nlog(n)).
+    set<int> CDT;
+    for(Intervalo I : caminoMin){ if(0 < I.idx  && I.idx < 2*K + 1) CDT.insert(P[I.idx - 1]);}
+
+    // Escribo por consola el cardinal del CDT y cada elemento de este. Complejidad: O(n).
+    cout << CDT.size() << endl;
+    for(int e : CDT){ cout << e << " ";}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-// Sea un Intervalo I = [a, b].
 /*
-GrafoIntervalo::GrafoIntervalo()
-{
-    cin >> _n;
-    int a, b;
-    for(int i = 0; i < _n; i++)
-    {
-        cin >> a;
-        cin >> b; 
-        _intervalos.push_back(Intervalo(a, b, i + 1));
+    int minA = 2*n - 1;
+    int maxB = 0;
+    for(Intervalo Ii : intervalos){
+        minA = min(Ii.a, minA);
+        maxB = max(Ii.b, maxB);
     }
-
-    // Ordeno segun a creciente, O(nlog(n)).
-    sort(_intervalos.begin(), _intervalos.end(), [](Intervalo v, Intervalo u) { 
-            return v.a < u.a;
-        });
-
-    // Inicializo conjunto de nodos del Grafo Intervalo. 
-    vector<NodoInt> _N;
-    
-    // Inicializo lista de adyacencia del Grafo Intervalo.
-    vector<vector<CabezaInt>> iEsimoNodo(2);
-    vector<vector<vector<CabezaInt>>> _adylst(_n+1, iEsimoNodo);
-
-    // Construyo N, O(n²).
-
-    // Vector auxiliar que guarda los intervalos que forman parte del Grafo Intervalo 
-    // sin la distincion del In y el Out. 
-    vector<Intervalo> intervalosEnN; 
-
-    // Creo intervalo de "mentria" I_0.
-    Intervalo intInicio = Intervalo(_intervalos.front().a - 2, _intervalos.front().b - 1, 0);
-    NodoInt nodoInicio = NodoInt(intInicio, 0);
-    intervalosEnN.push_back(intInicio); 
-    _N.push_back(nodoInicio);
-    
-    for (Intervalo iInt : _intervalos) 
-    {
-        bool estaIncluido = false;
-        for (Intervalo jInt : _intervalos)
-        {
-            if (jInt.a < iInt.a < iInt.b < jInt.b)
-            {
-                estaIncluido = true; 
-                break;
-            }
-        }
-        if (!estaIncluido)         
-        {   
-            intervalosEnN.push_back(iInt);
-            NodoInt iNodoIn = NodoInt(iInt, 0); NodoInt iNodoOut = NodoInt(iInt, 1);
-            _N.push_back(iNodoIn); _N.push_back(iNodoOut);
-            _adylst[iInt.idx][0].push_back(CabezaInt(iNodoOut, 0));
-        } 
-    }
-
-    // Creo intervalo de "mentira" I_n+1.
-    Intervalo intFin = Intervalo(_intervalos.back().a + 1, _intervalos.back().b + 1, 0);
-    NodoInt nodoFin = NodoInt(intFin, 1); 
-    intervalosEnN.push_back(intFin);
-    _N.push_back(nodoFin);
-
-    // Construyo B, O(n²).
-    
-
-    // Luego voy iterando sobre los intervalos que son nodos viendo si su asociado esta entre ellos, 
-    // en caso negativo los agrego como aristas del grafo, O(n²).
-    for (Intervalo iInt : intervalosEnN)
-    {
-        Intervalo iEsimoAsociado = intervaloAsociado[iInt.idx];
-        for (Intervalo jInt : intervalosEnN)
-        {
-            if (iInt.b < jInt.a && !(iInt.b < iEsimoAsociado.a < iEsimoAsociado.b < jInt.a))
-            {
-                NodoInt jNodoOut = NodoInt(jInt, 1);
-                int peso = (iInt == intInicio) ? 0 : 1;
-                _adylst[iInt.idx][0].push_back(CabezaInt(jNodoOut, peso));
-            }
-        }
-    }
-
-    
-}
-
-GrafoIntervalo::~GrafoIntervalo(){}
-
-void GrafoIntervalo::solver()
-{
-
-}
-
 */
+
+/*
+    for (int i = 0; i < D.size(); i++) {
+        for (const auto& [v, w] : D[i]) {
+            cout << i << " " << v.idx << " " << w << endl;
+        }
+*/
+
