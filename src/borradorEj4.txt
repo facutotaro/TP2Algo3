@@ -1,0 +1,248 @@
+0. Me dan n y una cantidad n de intervalos. 
+
+1. Armo un conjunto I de intervalos donde guardo los valores que me pasaron como entrada [a, b] y los ordeno segun el a. 
+   Complejidad: O(n + nlog(n)) = O(nlog(n)). 
+
+2. Armo una estructura Intervalos donde voy a tener mi conjunto I de intervalos y además dos intervalo Inicio = [-inf, min(a, I) - 1]
+   y Fin = [max(b, I) + 1, inf]. 
+   Complejidad: O(n) 
+
+
+3. Vamos a armar un Grafo Intervalo D(N, A) con las siguientes caracteristicas: 
+
+	. D: Va a tener como componentes a: 
+
+		. N: conjunto de nodos. Vamos a incluir a un intervalo de i = [ai, bi] de I' en N <==> No existe un intervalo j = [aj, bj] en 						  I' tq aj < ai < bi < bj  					  
+								Complejidad: O(n^2)
+
+							Pseudocodigo:  
+
+								ConstruirNodos(Intervalos Int) 
+								{
+									N.Inicio <- Inicio
+
+									for each i in Int.I
+										
+										bool estaIncluido <- false 
+										
+										for each j in Int.I 
+											
+											if j.a < i.a < i.b < j.b then 
+												estaIncluido <- true 
+												break
+											endif 
+										
+										endfor 
+										
+										if !estaIncluido then 
+											N.Intervalos U {i}
+										endif
+
+									endfor 
+
+									N.Fin <- Fin
+								}
+	
+
+		. A: conjunto de aristas. Este conjunto esta definidio a partir de la union de otros dos conjuntos disjuntos B y C. 
+								  Una arista (i, j) va a ser incluida en B <==> unen intervalos que se intersecan: ai < aj < bi < bj. 
+								  Una arista (i, j) va a ser incluida en C <==> unen intervalos que no se intersecan y ademas no 
+								  												existe un intervalo entre medio de estos dos: 
+								  												bi < aj Y no existe h en I' tq bi < ah < bh < aj. 
+								  Complejidad: O(n^2)
+
+								  ConstruirAristas(Intervalos I) 
+								  {
+								  		for (int i = 0; i < n; i++) 	// Conjunto B 
+
+								  			for each j in I.Intervalos 
+								  				
+								  				if I.Intervalos[i].a < j.a < I.Intervalos[i].b < j.b then 
+								  					arista <- ConstruirArista(i, j, 1) 
+								  					A U arista
+								  					ListaAdyacencia[i] U Cabeza(j, 1)
+								  				endif 
+								  			
+								  			endfor 
+
+								  		endfor 
+
+								  		ultimoInt <- I.Intervalos[n-1]
+
+								  		for (int i = 0; i < n-1; i++) // Conjunto C 
+
+								  			iEsimoInt <- I.Intervalos[i]
+
+								  			primerInt <- I.Intervalos[i+1]
+
+								  			for (int j = i + 1; j < n; j++) 
+
+								  				jEsimoInt <- I.Intervalos[j]
+								  				
+								  				if iEsimoInt.b < jEsimoInt.a && !(iEsimoInt.b < primerInt.a < primerInt.b < jEsimoInt.a)  
+								  					arista <- ConstruirArista(i, j, 1) 
+								  					A U arista 
+								  					ListaAdyacencia[i] U Cabeza(j, 1)	 
+
+								  				else 
+								  					break 
+
+								  				endif 
+								  			
+								  			endfor
+
+								  			if iEsimoInt.b < Fin.a && !(iEsimoInt.b < ultimoInt.a < ultimoInt.b < Fin.a)
+								  				 	arista <- ConstruirArista(i, n, 1) 
+								  					A U arista 
+								  					ListaAdyacencia[i] U Cabeza(n, 1)	
+								  		
+								  		endfor 
+
+								  		primerInt <- I.Intervalos[0]
+
+								  		for (int j = 0; j < n; j++)
+								  			
+								  			jEsimoInt <- I.Intervalos[j]
+
+								  			if Inicio.b < jEsimoInt.a && !(Inicio.b < primerInt.a < primerInt.b < jEsimoInt.a) then 
+								  				arista <- ConstruirArista(0, j, 0) 
+								  				A U arista 
+								  				ListaAdyacenciaInicio U {Cabeza(j, 0)}
+								  			
+								  			else 
+								  				break
+
+								  			endif 
+
+								  		endfor 
+
+								  }
+
+		. ListaAdyacencia: Vector de vectores que contiene a los vecinos dirigidos de un nodo i en N. 
+
+		. ListaAdyacenciaInicio: Vector con los vecinos dirigidos del nodo especial Inicio. 
+
+4. Vamos a transformar el Grafo Intervalo D(N, A) a un D'(N', A') con las siguientes caracteristicas: 
+	
+	. D': Va a tener como componentes a: 
+	
+		. N': conjunto de nodos. Igual a N solo que vamos a dividir cada nodo en dos: i_in i_out.  
+								Complejidad: O(n^2)
+
+								Pseudocodigo:  
+
+									ConstruirNodos(Intervalos I) 
+									{	
+										N.Inicio <- Inicio
+
+										for each i in I
+											
+											bool estaIncluido = false
+											
+											for each j in I 
+												
+												if j.a < i.a < i.b < j.b then 
+													estaIncluido = true 
+													break
+												
+												endif 
+											endfor 
+											
+											if !estaIncluido then 
+												N.Intervalos U {i}
+
+												arista <- ConstruirArista(i, i, 0)
+												A u arista
+												I.ListaAdyacenciaIn[i] U Cabeza(i, 1)
+											endif
+
+										endfor 
+
+										N.Fin <- Fin; 
+									}
+
+			. Inicio: 
+
+			. Fin: 
+
+			. Intervalos: 
+
+		. A': conjunto de aristas. Este conjunto esta definidio a partir de la union de otros dos conjuntos disjuntos B y C. 
+								  Una arista (i, j) va a ser incluida en B <==> unen intervalos que se intersecan: ai < aj < bi < bj. 
+								  Una arista (i, j) va a ser incluida en C <==> unen intervalos que no se intersecan y ademas no 
+								  												existe un intervalo entre medio de estos dos: 
+								  												bi < aj Y no existe h en I' tq bi < ah < bh < aj. 
+								  Complejidad: O(n^2)
+
+								  ConstruirAristas(Intervalos I) 
+								  {
+								  	for (int i = 0; i < n; i++) 	// Conjunto B 
+
+								  		for each j in I.Intervalos 
+								  				
+							  				if I.Intervalos[i].a < j.a < I.Intervalos[i].b < j.b then 
+							  					arista <- ConstruirArista(i, j, 1) 
+							  					A U arista
+							  					ListaAdyacenciaOut[i] U Cabeza(j, 1)
+							  				endif 
+								  			
+								  		endfor 
+
+								  	endfor 
+
+							  		ultimoInt <- I.Intervalos[n-1]
+
+							  		for (int i = 0; i < n-1; i++) // Conjunto C 
+
+							  			iEsimoInt <- I.Intervalos[i]
+
+							  			primerInt <- I.Intervalos[i+1]
+
+							  			for (int j = i + 1; j < n; j++) 
+
+							  				jEsimoInt <- I.Intervalos[j]
+							  				
+							  				if iEsimoInt.b < jEsimoInt.a && !(iEsimoInt.b < primerInt.a < primerInt.b < jEsimoInt.a)  
+							  					arista <- ConstruirArista(i, j, 1) 
+							  					A U arista 
+							  					ListaAdyacenciaIn[i] U Cabeza(j, 1)	 
+
+							  				else 
+							  					break 
+
+							  				endif 
+							  			
+							  			endfor
+
+							  			if iEsimoInt.b < Fin.a && !(iEsimoInt.b < ultimoInt.a < ultimoInt.b < Fin.a)
+							  				 	arista <- ConstruirArista(i, n, 1) 
+							  					A U arista 
+							  					ListaAdyacenciaIn[i] U Cabeza(n, 1)	
+							  		
+							  		endfor 
+
+							  		primerInt <- I.Intervalos[0]
+
+							  		for (int j = 0; j < n; j++)
+							  			
+							  			jEsimoInt <- I.Intervalos[j]
+
+							  			if Inicio.b < jEsimoInt.a && !(Inicio.b < primerInt.a < primerInt.b < jEsimoInt.a) then 
+							  				arista <- ConstruirArista(0, j, 0) 
+							  				A U arista 
+							  				ListaAdyacenciaInicio U {Cabeza(j, 0)}
+							  			
+							  			else 
+							  				break
+
+							  			endif 
+
+							  		endfor 
+
+								  }
+
+		. ListaAdyanciaIn[i]
+
+		. ListaAdyancenciaOut[i]
+
+		. ListaAdyanceciaInicio
