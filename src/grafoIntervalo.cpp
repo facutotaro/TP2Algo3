@@ -209,6 +209,7 @@ void grafoIntervalo(){
     // Escribo por consola el cardinal del CDT y cada elemento de este. Complejidad: O(n).
     cout << CDT.size() << endl;
     for(int e : CDT){ cout << e << " ";}
+    cout << endl;
 }
 
 /*

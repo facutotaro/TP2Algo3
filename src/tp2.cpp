@@ -3,6 +3,7 @@
 #include "bellmanFord.h"
 #include "digrafo.h"
 #include "johnson.h"
+#include "grafoIntervalo.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
         break;
     }
     case 4:
-        cout << "Hola Fede" << endl;
+        grafoIntervalo();
         break;
    default:
         cout << "No master ese ej no lo tengo" << endl;
