@@ -19,11 +19,6 @@ struct Digrafo
     Digrafo();
     ~Digrafo();
     void mostrar();
-
-    // Partes
-
-    // Nodos de la lista de adyacencia
-
     // Cantidad de aristas
     int _aristas;
     // Cantidad de nodos

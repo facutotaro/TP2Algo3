@@ -9,6 +9,6 @@ using namespace std;
 typedef int Nodo;
 typedef int dist;
 //const int INF = std::numeric_limits<int>::max();
-bool bellmanFord(Digrafo g, Nodo n, vector<dist> &res);
+bool bellmanFord(Digrafo &g, Nodo &n, vector<dist> &res);
 
 #endif

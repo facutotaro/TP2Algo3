@@ -3,6 +3,7 @@
 #include <iostream>
 using namespace std;
 
+//Constructor del digrafo. Carga sobre stdin
 Digrafo::Digrafo()
 {
     cin >> _nodos;

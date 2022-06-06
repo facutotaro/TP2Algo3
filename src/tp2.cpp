@@ -8,6 +8,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
    switch (stoi(argv[1]))
    {
    case 1:
@@ -18,7 +20,6 @@ int main(int argc, char *argv[])
         break;
     case 3:
     {
-        cout << "Hola Facu" << endl;
         Digrafo g = Digrafo();
         johnson(g);
         break;
