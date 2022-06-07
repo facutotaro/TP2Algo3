@@ -1,0 +1,10 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/facu/TP2Algo3/src'
+g++ -Wall -g -c tp2.cpp
+g++    -c -o dijkstra.o dijkstra.cpp
+g++    -c -o bellmanFord.o bellmanFord.cpp
+g++    -c -o digrafo.o digrafo.cpp
+g++    -c -o johnson.o johnson.cpp
+g++ -Wall -g tp2.o dijkstra.o bellmanFord.o digrafo.o johnson.o -o tp2
+make: Leaving directory '/home/facu/TP2Algo3/src'
+ 

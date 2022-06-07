@@ -5,6 +5,7 @@
 #include "johnson.h"
 #include "grafoIntervalo.h"
 #include "Ej2Solver.h"
+#include "ej1.h"
 
 using namespace std;
 
@@ -15,8 +16,11 @@ int main(int argc, char *argv[])
    switch (stoi(argv[1]))
    {
    case 1:
-        cout << "Hola Juli" << endl;
-       break;
+    {
+        grafo g = grafo();
+        solverEj1(g);
+        break;
+    }
    case 2:
    { 
         Ej2Solver s = Ej2Solver();
@@ -30,10 +34,14 @@ int main(int argc, char *argv[])
         break;
     }
     case 4:
+    {
         grafoIntervalo();
         break;
+    }
    default:
-        cout << "No master ese ej no lo tengo" << endl;
-       break;
+    {
+        cout << "Vuelva a ejecutar con un numero de ejercicio valido" << endl;
+        break;
+    }
    }  
 }
