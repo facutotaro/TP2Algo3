@@ -15,3 +15,5 @@ también los scripts usados para generar los casos de test que se usaron para me
 No se envian todos los archivos ya que los mismos son muy pesados y el mail no soporta el mismo.
 
 Se recomienda empezar por la carpeta 1porciento. El formato de los scripts para generar los grafos es muy similar en todos los casos
+
+DISCLAIMER: Generar los casos de test puede llevar un tiempo.

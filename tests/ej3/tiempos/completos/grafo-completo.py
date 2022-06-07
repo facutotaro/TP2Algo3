@@ -57,8 +57,8 @@ m = 100
 sd = 5
 
 route = ""
+
+#Genear casos de test para aristas entre 100 y 4500 de 200 en 200
 for i in tqdm(range(100,4501,200)):
     generarGrafoConexo2(0,str(0) + "c" ,i,m,sd,route)
 
-for i in tqdm(range(100,4501,200)):
-    generarGrafoConexo2(100,str(0) + "c" ,i,m,sd,route)

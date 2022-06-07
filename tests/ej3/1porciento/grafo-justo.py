@@ -35,7 +35,7 @@ def setear(matriz,i,j,sign,arr1,arr2,media,sd):
 #n: cantidad de nodos
 #m: media para el peso de las aristas
 #sd: distribución estandar para el peso de las aristas
-#carpeta: por una cuestion de practidcidad, ponemos las de la misma cantidad de nodos en una misma carpeta
+#carpeta: por una cuestion de practicidad, ponemos las de la misma cantidad de nodos en una misma carpeta
 #rutadeldirectorio: especificamos en que directorio queremos que se nos generen los archivos
 def generarGrafoConexo2(sign,nombre,n,m,sd,carpeta,rutadeldirectorio):
     matrix = []
