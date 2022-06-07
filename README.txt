@@ -4,7 +4,7 @@ Instrucciones de compilacion y ejecucion en Linux:
 En linea de comando
 3) En ese directorio ejecutar el comando cmake ..
 4) Ejecutar el comando make
-5) Ejecutar el ./tp2 <numero de ejercio> < <nombre del test con su ruta> para correr los ejercicios y el archivo por std Instrucciones
+5) Ejecutar el ./tp2 <numero de ejercio> < <nombre del test con su ruta> para correr los ejercicios y el archivo por std. 
 
 Ejemplo de comandos:
 cd src
