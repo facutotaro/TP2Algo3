@@ -4,6 +4,7 @@
 #include "digrafo.h"
 #include "johnson.h"
 #include "grafoIntervalo.h"
+#include "Ej2Solver.h"
 
 using namespace std;
 
@@ -16,9 +17,12 @@ int main(int argc, char *argv[])
    case 1:
         cout << "Hola Juli" << endl;
        break;
-   case 2: 
-        cout << "Hola Tomi" << endl;
+   case 2:
+   { 
+        Ej2Solver s = Ej2Solver();
+        cout << s.cantCompConexas() << endl;
         break;
+    }
     case 3:
     {
         Digrafo g = Digrafo();
