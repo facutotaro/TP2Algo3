@@ -3,3 +3,8 @@ aristas a (n-1)*(n-2)/2 aristas. Uno con un grafo con ciclos negativos y otro qu
 Y el script de python para generar esos casos
 En la carpta grafos completos se encuentrandos casos de tests para grafos completos. Uno con un grafo con ciclos negativos y otro que tiene ciclos negativos. 
 Y el script de python para generar esos casos
+
+Se requiere tener instalados numpy y tqdm: 
+
+pip3 install numpy 
+pip3 install tqdm 

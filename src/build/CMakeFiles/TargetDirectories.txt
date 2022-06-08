@@ -1,3 +1,0 @@
-/home/facu/TP2Algo3/src/build/CMakeFiles/rebuild_cache.dir
-/home/facu/TP2Algo3/src/build/CMakeFiles/edit_cache.dir
-/home/facu/TP2Algo3/src/build/CMakeFiles/tp2.dir
