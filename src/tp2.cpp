@@ -1,11 +1,11 @@
 #include <iostream>
-#include "dijkstra.h"
-#include "bellmanFord.h"
-#include "digrafo.h"
-#include "johnson.h"
-#include "grafoIntervalo.h"
-#include "Ej2Solver.h"
-#include "ej1.h"
+#include "ej3/dijkstra.h"
+#include "ej3/bellmanFord.h"
+#include "ej3/digrafo.h"
+#include "ej3/johnson.h"
+#include "ej4/grafoIntervalo.h"
+#include "ej2/Ej2Solver.h"
+#include "ej1/ej1.h"
 
 using namespace std;
 
